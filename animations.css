@@ -1,0 +1,270 @@
+/* =========================================================
+   DIMPLE DI WEBSITE
+   animations.css
+   All keyframes + animation utility classes
+   ========================================================= */
+
+/* ---------- Loader Spin (used on index.html #loader) ---------- */
+
+@keyframes spin{
+    from{ transform:rotate(0deg); }
+    to{ transform:rotate(360deg); }
+}
+
+/* ---------- Fade In ---------- */
+
+@keyframes fadeIn{
+    from{ opacity:0; }
+    to{ opacity:1; }
+}
+
+.anim-fade-in{
+    animation:fadeIn var(--speed-slow) var(--ease) forwards;
+}
+
+/* ---------- Fade In Up (cards, messages entering) ---------- */
+
+@keyframes fadeInUp{
+    from{
+        opacity:0;
+        transform:translateY(24px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+.anim-fade-in-up{
+    animation:fadeInUp var(--speed-slow) var(--ease) forwards;
+}
+
+/* ---------- Fade In Down (top titles/illustrations) ---------- */
+
+@keyframes fadeInDown{
+    from{
+        opacity:0;
+        transform:translateY(-20px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+.anim-fade-in-down{
+    animation:fadeInDown var(--speed-slow) var(--ease) forwards;
+}
+
+/* ---------- Page Transition (Smooth Fade between pages) ---------- */
+
+@keyframes pageFadeIn{
+    from{ opacity:0; }
+    to{ opacity:1; }
+}
+
+@keyframes pageFadeOut{
+    from{ opacity:1; }
+    to{ opacity:0; }
+}
+
+.page-enter{
+    animation:pageFadeIn var(--speed-slow) var(--ease) forwards;
+}
+
+.page-exit{
+    animation:pageFadeOut var(--speed) var(--ease) forwards;
+}
+
+/* ---------- Scale In (buttons, reveals, puzzle reward) ---------- */
+
+@keyframes scaleIn{
+    from{
+        opacity:0;
+        transform:scale(.85);
+    }
+    to{
+        opacity:1;
+        transform:scale(1);
+    }
+}
+
+.anim-scale-in{
+    animation:scaleIn var(--speed) var(--ease) forwards;
+}
+
+/* ---------- Glow Reveal (Hidden Section) ---------- */
+
+@keyframes glowReveal{
+    0%{
+        opacity:0;
+        transform:scale(.9);
+        filter:drop-shadow(0 0 0 rgba(126,200,255,0));
+    }
+    60%{
+        opacity:1;
+        filter:drop-shadow(0 0 25px rgba(126,200,255,.55));
+    }
+    100%{
+        transform:scale(1);
+        filter:drop-shadow(0 0 12px rgba(126,200,255,.35));
+    }
+}
+
+.anim-glow-reveal{
+    animation:glowReveal 1.4s var(--ease) forwards;
+}
+
+/* ---------- Typewriter Text ---------- */
+/* Usage: wrap text in a span, set --chars to character count via inline style,
+   e.g. style="--chars:42; animation-duration:calc(var(--chars) * .05s)" */
+
+@keyframes typewriter{
+    from{ width:0; }
+    to{ width:100%; }
+}
+
+@keyframes caretBlink{
+    0%,100%{ opacity:1; }
+    50%{ opacity:0; }
+}
+
+.typewriter{
+    display:inline-block;
+    max-width:100%;
+    white-space:nowrap;
+    overflow:hidden;
+    border-right:2px solid var(--primary);
+    animation:
+        typewriter 2.2s steps(40,end) forwards,
+        caretBlink .75s step-end infinite;
+}
+
+/* ---------- Floating Decorative Elements ---------- */
+/* Used by .float-item on index.html (flower-1, flower-2, star-1, star-2) */
+
+@keyframes floatY{
+    0%,100%{ transform:translateY(0) rotate(0deg); }
+    50%{ transform:translateY(-18px) rotate(6deg); }
+}
+
+@keyframes floatYReverse{
+    0%,100%{ transform:translateY(0) rotate(0deg); }
+    50%{ transform:translateY(16px) rotate(-6deg); }
+}
+
+.float-item{
+    animation:floatY 6s ease-in-out infinite;
+}
+
+.float-item.flower-1{
+    top:10%;
+    left:8%;
+    width:46px;
+    animation:floatY 7s ease-in-out infinite;
+}
+
+.float-item.flower-2{
+    bottom:14%;
+    right:10%;
+    width:38px;
+    animation:floatYReverse 8s ease-in-out infinite;
+}
+
+.float-item.star-1{
+    top:20%;
+    right:14%;
+    width:22px;
+    animation:floatY 5s ease-in-out infinite;
+}
+
+.float-item.star-2{
+    bottom:22%;
+    left:12%;
+    width:18px;
+    animation:floatYReverse 6.5s ease-in-out infinite;
+}
+
+/* ---------- Blur Circle Slow Pulse ---------- */
+
+@keyframes pulseSoft{
+    0%,100%{ opacity:.45; transform:scale(1); }
+    50%{ opacity:.6; transform:scale(1.08); }
+}
+
+.blur-circle{
+    animation:pulseSoft 9s ease-in-out infinite;
+}
+
+/* ---------- Progress Fill Transition (loading screen) ---------- */
+
+.progress-fill{
+    transition:width .3s var(--ease);
+}
+
+/* ---------- Puzzle Tile Pop (on correct placement) ---------- */
+
+@keyframes tilePop{
+    0%{ transform:scale(1); }
+    40%{ transform:scale(1.12); }
+    100%{ transform:scale(1); }
+}
+
+.anim-tile-pop{
+    animation:tilePop .4s var(--ease);
+}
+
+/* ---------- Photo Frame Entrance (staggered collage) ---------- */
+
+@keyframes frameIn{
+    from{
+        opacity:0;
+        transform:translateY(20px) scale(.96);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0) scale(1);
+    }
+}
+
+.anim-frame-in{
+    animation:frameIn var(--speed-slow) var(--ease) forwards;
+}
+
+/* Stagger helper classes: add alongside .anim-frame-in on grid items */
+.stagger-1{ animation-delay:.1s; }
+.stagger-2{ animation-delay:.2s; }
+.stagger-3{ animation-delay:.3s; }
+.stagger-4{ animation-delay:.4s; }
+.stagger-5{ animation-delay:.5s; }
+.stagger-6{ animation-delay:.6s; }
+
+/* ---------- Button Tap Feedback ---------- */
+
+@keyframes tapPulse{
+    0%{ box-shadow:0 0 0 0 rgba(126,200,255,.45); }
+    100%{ box-shadow:0 0 0 18px rgba(126,200,255,0); }
+}
+
+.anim-tap-pulse{
+    animation:tapPulse .6s var(--ease);
+}
+
+/* ---------- Reduced Motion Override ---------- */
+
+@media (prefers-reduced-motion: reduce){
+
+    .float-item,
+    .blur-circle,
+    .typewriter,
+    .anim-fade-in,
+    .anim-fade-in-up,
+    .anim-fade-in-down,
+    .anim-scale-in,
+    .anim-glow-reveal,
+    .anim-frame-in,
+    .page-enter,
+    .page-exit{
+        animation:none !important;
+    }
+}

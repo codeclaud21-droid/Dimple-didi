@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#F8FBFF">
+<title>Yaadon Ka Album | For My Dimple Di ❤️</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/animations.css">
+<style>
+  /* ============ Memory Frames — page specific ============ */
+  #gallery-page{
+    overflow: hidden;
+    height: 100vh;
+    height: 100dvh;
+  }
+  #gallery-page .top-bar{ z-index: 40; }
+
+  .frames-title{
+    position: absolute;
+    top: 64px;
+    left: 0; right: 0;
+    text-align: center;
+    z-index: 20;
+    pointer-events: none;
+  }
+  .frames-title h1{
+    font-family: var(--font-emotion, 'Caveat', cursive);
+    font-size: clamp(24px, 7vw, 32px);
+    color: #fff;
+    text-shadow: 0 2px 14px rgba(0,0,0,0.35);
+    margin: 0;
+  }
+
+  /* ---- backdrop layer (blurred/dimmed cinematic bg) ---- */
+  .frame-stage{
+    position: absolute;
+    inset: 0;
+    background: #100d16;
+  }
+  .backdrop{
+    position: absolute;
+    inset: -20px;
+    background-size: cover;
+    background-position: center;
+    filter: blur(38px) saturate(1.2) brightness(0.55);
+    transform: scale(1.15);
+    opacity: 0;
+    transition: opacity 0.7s ease;
+  }
+  .backdrop.active{ opacity: 1; }
+  .backdrop-vignette{
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at center, rgba(0,0,0,0) 35%, rgba(10,8,16,0.65) 100%),
+      linear-gradient(to bottom, rgba(10,8,16,0.55) 0%, rgba(10,8,16,0.05) 22%, rgba(10,8,16,0.05) 70%, rgba(10,8,16,0.75) 100%);
+    z-index: 2;
+  }
+
+  /* ---- slides track ---- */
+  .frames-track{
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .frame-slide{
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transform: scale(0.86);
+    transition: opacity 0.55s ease, transform 0.55s cubic-bezier(.22,.9,.34,1);
+    pointer-events: none;
+  }
+  .frame-slide.active{
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: auto;
+  }
+  .frame-slide.prev{
+    transform: scale(0.86) translateX(-6%);
+  }
+  .frame-slide.next{
+    transform: scale(0.86) translateX(6%);
+  }
+
+  /* ---- the ornate photo frame ---- */
+  .frame-halo{
+    position: absolute;
+    width: 92vw;
+    max-width: 380px;
+    aspect-ratio: 4/5.1;
+    border-radius: 26px;
+    background: linear-gradient(135deg, #ffd6ec, #cdb8ff 45%, #7ec8ff);
+    filter: blur(30px);
+    opacity: 0.55;
+    z-index: 0;
+    animation: haloPulse 5s ease-in-out infinite;
+  }
+  @keyframes haloPulse{
+    0%,100%{ opacity: 0.4; transform: scale(0.98); }
+    50%{ opacity: 0.6; transform: scale(1.03); }
+  }
+
+  .frame-card{
+    position: relative;
+    width: 90vw;
+    max-width: 372px;
+    aspect-ratio: 4/5.1;
+    border-radius: 22px;
+    padding: 10px;
+    background: linear-gradient(160deg, rgba(255,255,255,0.95), rgba(255,255,255,0.75));
+    box-shadow:
+      0 18px 45px rgba(20,10,35,0.4),
+      0 2px 0 rgba(255,255,255,0.6) inset;
+    z-index: 1;
+  }
+  .frame-inner{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #eee;
+    box-shadow: 0 0 0 1.5px rgba(205,184,255,0.9) inset, 0 0 0 5px #fff inset;
+  }
+  .frame-inner img{
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1);
+    transition: transform 6.5s ease-out;
+  }
+  .frame-slide.active .frame-inner img{
+    transform: scale(1.12);
+  }
+  .frame-sheen{
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0) 35%);
+    pointer-events: none;
+  }
+
+  /* corner flourishes */
+  .corner-deco{
+    position: absolute;
+    font-size: 20px;
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.25));
+    z-index: 2;
+    opacity: 0.95;
+  }
+  .corner-deco.tl{ top: -4px; left: -4px; }
+  .corner-deco.tr{ top: -4px; right: -4px; transform: scaleX(-1); }
+  .corner-deco.bl{ bottom: -4px; left: -4px; transform: scaleY(-1); }
+  .corner-deco.br{ bottom: -4px; right: -4px; transform: scale(-1,-1); }
+
+  /* photo index numeral, elegant */
+  .frame-index{
+    position: absolute;
+    bottom: -34px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--font-emotion, 'Caveat', cursive);
+    font-size: 20px;
+    color: #fff;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.4);
+    letter-spacing: 1px;
+    z-index: 2;
+  }
+  .frame-caption{
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(6px);
+    padding: 5px 16px;
+    border-radius: 20px;
+    font-family: var(--font-emotion, 'Caveat', cursive);
+    font-size: 17px;
+    color: #6b4f8f;
+    box-shadow: 0 4px 14px rgba(60,30,90,0.18);
+    white-space: nowrap;
+    z-index: 3;
+  }
+
+  /* floating sparkles around frame */
+  .frame-sparkle{
+    position: absolute;
+    font-size: 15px;
+    z-index: 2;
+    opacity: 0.85;
+    animation: sparkleFloat 4s ease-in-out infinite;
+  }
+  @keyframes sparkleFloat{
+    0%,100%{ transform: translateY(0) rotate(0deg); }
+    50%{ transform: translateY(-10px) rotate(12deg); }
+  }
+
+  /* ---- swipe arrows (subtle glass) ---- */
+  .frame-nav{
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.16);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 25;
+    opacity: 0.8;
+  }
+  .frame-nav.left{ left: 10px; }
+  .frame-nav.right{ right: 10px; }
+  .frame-nav svg{ width: 18px; height: 18px; }
+
+  /* ---- dots indicator ---- */
+  .frame-dots{
+    position: absolute;
+    bottom: 108px;
+    left: 0; right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 7px;
+    z-index: 25;
+  }
+  .frame-dot{
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.35);
+    transition: all 0.35s ease;
+  }
+  .frame-dot.seen{
+    background: rgba(255,255,255,0.65);
+  }
+  .frame-dot.current{
+    width: 18px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, #ffd6ec, #cdb8ff);
+  }
+
+  /* ---- continue button area ---- */
+  .frames-continue-wrap{
+    position: absolute;
+    bottom: 34px;
+    left: 0; right: 0;
+    display: flex;
+    justify-content: center;
+    z-index: 30;
+    opacity: 0;
+    transform: translateY(14px);
+    pointer-events: none;
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .frames-continue-wrap.show{
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+  .frames-hint{
+    position: absolute;
+    bottom: 34px;
+    left: 0; right: 0;
+    text-align: center;
+    z-index: 25;
+    color: rgba(255,255,255,0.7);
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    transition: opacity 0.5s ease;
+  }
+  .frames-hint.hide{ opacity: 0; }
+
+  /* ============ Opening Curtain ============ */
+  #curtain-overlay{
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    cursor: pointer;
+  }
+  .curtain-panel{
+    position: relative;
+    width: 50%;
+    height: 100%;
+    overflow: hidden;
+    transition: transform 1.15s cubic-bezier(.76,0,.24,1);
+  }
+  .curtain-left{
+    background: linear-gradient(120deg, #a9d4ff 0%, #cdb8ff 60%, #e3c9ff 100%);
+    border-right: 1px solid rgba(255,255,255,0.4);
+  }
+  .curtain-right{
+    background: linear-gradient(300deg, #ffc9e6 0%, #cdb8ff 60%, #b9d6ff 100%);
+    border-left: 1px solid rgba(255,255,255,0.4);
+  }
+  .curtain-panel::before{
+    content:'';
+    position: absolute;
+    inset: 0;
+    background-image: repeating-linear-gradient(100deg, rgba(255,255,255,0.16) 0px, rgba(255,255,255,0.16) 2px, transparent 2px, transparent 26px);
+    mix-blend-mode: overlay;
+  }
+  .curtain-panel::after{
+    content:'';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.35), transparent 60%);
+  }
+  #curtain-overlay.opened .curtain-left{ transform: translateX(-100%); }
+  #curtain-overlay.opened .curtain-right{ transform: translateX(100%); }
+  #curtain-overlay.hidden-full{ pointer-events: none; }
+
+  .curtain-content{
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+    text-align: center;
+    padding: 0 30px;
+    transition: opacity 0.4s ease, transform 0.5s ease;
+  }
+  #curtain-overlay.opened .curtain-content{
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  .curtain-emblem{
+    font-size: 34px;
+    margin-bottom: 6px;
+    animation: sparkleFloat 3s ease-in-out infinite;
+  }
+  .curtain-title{
+    font-family: var(--font-emotion, 'Caveat', cursive);
+    font-size: clamp(30px, 9vw, 42px);
+    color: #fff;
+    text-shadow: 0 3px 16px rgba(60,30,90,0.35);
+  }
+  .curtain-sub{
+    margin-top: 10px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.9);
+    letter-spacing: 0.5px;
+    animation: curtainPulse 1.8s ease-in-out infinite;
+  }
+  @keyframes curtainPulse{
+    0%,100%{ opacity: 0.6; }
+    50%{ opacity: 1; }
+  }
+  .curtain-deco{
+    position: absolute;
+    font-size: 18px;
+    opacity: 0.85;
+    animation: sparkleFloat 4s ease-in-out infinite;
+  }
+</style>
+</head>
+<body>
+<div id="curtain-overlay">
+  <div class="curtain-panel curtain-left"></div>
+  <div class="curtain-panel curtain-right"></div>
+  <div class="curtain-content">
+    <div class="curtain-emblem">🌸</div>
+    <div class="curtain-title">Cute sister</div>
+    <p class="curtain-sub">Tap kahin bhi karo shuru karne ke liye</p>
+  </div>
+  <span class="curtain-deco" style="top:14%; left:8%;">✨</span>
+  <span class="curtain-deco" style="top:20%; right:10%; animation-delay:0.8s;">💫</span>
+  <span class="curtain-deco" style="bottom:16%; left:12%; animation-delay:1.4s;">🌷</span>
+  <span class="curtain-deco" style="bottom:20%; right:8%; animation-delay:0.4s;">💗</span>
+</div>
+
+<main id="gallery-page" class="page">
+
+  <div class="frame-stage">
+    <div id="backdrop-a" class="backdrop"></div>
+    <div id="backdrop-b" class="backdrop"></div>
+    <div class="backdrop-vignette"></div>
+  </div>
+
+  <div class="top-bar">
+    <button id="back-btn" class="icon-btn" aria-label="Back">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path d="M15 18l-6-6 6-6" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <button id="music-btn" class="icon-btn" aria-label="Toggle Music">🔊</button>
+  </div>
+
+  <div class="frames-title">
+    <h1>Yaadon Ka Album</h1>
+  </div>
+
+  <div class="frames-track" id="frames-track"></div>
+
+  <button class="frame-nav left" id="nav-left" aria-label="Previous">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+  <button class="frame-nav right" id="nav-right" aria-label="Next">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+
+  <div class="frame-dots" id="frame-dots"></div>
+
+  <p class="frames-hint" id="frames-hint">← Swipe karo →</p>
+
+  <div class="frames-continue-wrap" id="continue-wrap">
+    <button id="continue-btn" class="primary-btn">Aage Badhiye</button>
+  </div>
+
+</main>
+
+<audio id="bg-music" src="assets/music/gallery.mp3" loop></audio>
+<script src="js/app.js"></script>
+<script>
+(function(){
+  var TOTAL = 12;
+  var photos = [];
+  for (var i = 1; i <= TOTAL; i++) photos.push('assets/image/photo' + i + '.jpg');
+  // Fisher-Yates shuffle
+  for (var i = photos.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = photos[i]; photos[i] = photos[j]; photos[j] = t;
+  }
+
+  var sparkleChars = ['✨','💫','🌸','💗','🌷'];
+  var cornerChar = '🌿';
+  // PLACEHOLDER captions — ek chhota cute note har photo ke niche.
+  // Inhe apni marzi se badal sakte ho, bas isi order me text change karna.
+  var captions = [
+    'Cute 🥺', 'Beautiful ✨', 'Yaad ❤️', 'Pyara pal 🌸',
+    'Meri jaan 💗', 'Hasi wali yaad 😄', 'Best memory 🌷',
+    'Dil se 💫', 'Masti wali baat 😝', 'Precious 🤍',
+    'Kabhi na bhoolna 🌙', 'Always ❤️'
+  ];
+
+  var track = document.getElementById('frames-track');
+  var dotsWrap = document.getElementById('frame-dots');
+  var backdropA = document.getElementById('backdrop-a');
+  var backdropB = document.getElementById('backdrop-b');
+  var usingA = true;
+
+  photos.forEach(function(src, idx){
+    var slide = document.createElement('div');
+    slide.className = 'frame-slide';
+    slide.dataset.index = idx;
+
+    var halo = document.createElement('div');
+    halo.className = 'frame-halo';
+    slide.appendChild(halo);
+
+    var card = document.createElement('div');
+    card.className = 'frame-card';
+
+    var inner = document.createElement('div');
+    inner.className = 'frame-inner';
+    var img = document.createElement('img');
+    img.src = src;
+    img.alt = '';
+    inner.appendChild(img);
+    var sheen = document.createElement('div');
+    sheen.className = 'frame-sheen';
+    inner.appendChild(sheen);
+    card.appendChild(inner);
+
+    ['tl','tr','bl','br'].forEach(function(pos){
+      var deco = document.createElement('span');
+      deco.className = 'corner-deco ' + pos;
+      deco.textContent = cornerChar;
+      card.appendChild(deco);
+    });
+
+    var idxLabel = document.createElement('div');
+    idxLabel.className = 'frame-index';
+    idxLabel.textContent = String(idx+1).padStart(2,'0') + ' / ' + String(TOTAL).padStart(2,'0');
+    card.appendChild(idxLabel);
+
+    var caption = document.createElement('div');
+    caption.className = 'frame-caption';
+    caption.textContent = captions[idx % captions.length];
+    inner.appendChild(caption);
+
+    slide.appendChild(card);
+
+    // floating sparkles positioned around the card
+    var sparklePositions = [
+      {top:'8%', left:'2%'}, {top:'4%', right:'6%'},
+      {bottom:'10%', left:'0%'}, {bottom:'6%', right:'3%'}
+    ];
+    sparklePositions.forEach(function(pos, si){
+      var sp = document.createElement('span');
+      sp.className = 'frame-sparkle';
+      sp.textContent = sparkleChars[(idx+si) % sparkleChars.length];
+      Object.keys(pos).forEach(function(k){ sp.style[k] = pos[k]; });
+      sp.style.animationDelay = (si * 0.6) + 's';
+      slide.appendChild(sp);
+    });
+
+    track.appendChild(slide);
+
+    var dot = document.createElement('div');
+    dot.className = 'frame-dot';
+    dot.dataset.index = idx;
+    dotsWrap.appendChild(dot);
+  });
+
+  var slides = track.querySelectorAll('.frame-slide');
+  var dots = dotsWrap.querySelectorAll('.frame-dot');
+  var current = 0;
+  var seen = new Array(TOTAL).fill(false);
+
+  function setBackdrop(src){
+    var showEl = usingA ? backdropB : backdropA;
+    var hideEl = usingA ? backdropA : backdropB;
+    showEl.style.backgroundImage = "url('" + src + "')";
+    showEl.classList.add('active');
+    hideEl.classList.remove('active');
+    usingA = !usingA;
+  }
+
+  function render(){
+    slides.forEach(function(s, i){
+      s.classList.remove('active','prev','next');
+      if (i === current) s.classList.add('active');
+      else if (i === current - 1) s.classList.add('prev');
+      else if (i === current + 1) s.classList.add('next');
+    });
+    dots.forEach(function(d, i){
+      d.classList.toggle('current', i === current);
+      d.classList.toggle('seen', seen[i]);
+    });
+    setBackdrop(photos[current]);
+    seen[current] = true;
+    dots[current].classList.add('seen');
+
+    var hint = document.getElementById('frames-hint');
+    if (current > 0) hint.classList.add('hide');
+
+    if (seen.every(Boolean)) {
+      document.getElementById('continue-wrap').classList.add('show');
+    }
+  }
+
+  function goTo(idx){
+    if (idx < 0 || idx >= TOTAL) return;
+    current = idx;
+    render();
+  }
+
+  document.getElementById('nav-left').addEventListener('click', function(){ goTo(current - 1); });
+  document.getElementById('nav-right').addEventListener('click', function(){ goTo(current + 1); });
+
+  // swipe support
+  var touchStartX = null;
+  track.addEventListener('touchstart', function(e){
+    touchStartX = e.touches[0].clientX;
+  }, {passive:true});
+  track.addEventListener('touchend', function(e){
+    if (touchStartX === null) return;
+    var dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 40) {
+      if (dx < 0) goTo(current + 1);
+      else goTo(current - 1);
+    }
+    touchStartX = null;
+  }, {passive:true});
+
+  render();
+
+  // ---- Standard music toggle IIFE ----
+  var audio = document.getElementById('bg-music');
+  var btn = document.getElementById('music-btn');
+  var storageKey = 'dimple_music_muted';
+  var muted = localStorage.getItem(storageKey) === 'true';
+
+  function updateIcon(){ btn.textContent = muted ? '🔇' : '🔊'; }
+  function tryPlay(){ if (!muted) { audio.play().catch(function(){}); } }
+
+  audio.muted = muted;
+  updateIcon();
+
+  btn.addEventListener('click', function(){
+    muted = !muted;
+    audio.muted = muted;
+    localStorage.setItem(storageKey, muted);
+    if (!muted) { audio.play().catch(function(){}); }
+    updateIcon();
+  });
+
+  // ---- Curtain: pehla tap curtain khol ke, isi genuine tap se music start karta hai ----
+  var curtain = document.getElementById('curtain-overlay');
+
+  function resetCurtain(){
+    curtain.classList.remove('opened','hidden-full');
+    curtain.style.display = 'flex';
+  }
+
+  function openCurtain(){
+    tryPlay();
+    curtain.classList.add('opened');
+    setTimeout(function(){
+      curtain.classList.add('hidden-full');
+      curtain.style.display = 'none';
+    }, 1200);
+    curtain.removeEventListener('click', openCurtain);
+    curtain.removeEventListener('touchend', openCurtain);
+  }
+
+  curtain.addEventListener('click', openCurtain, {once:true});
+  curtain.addEventListener('touchend', openCurtain, {once:true, passive:true});
+
+  // Mobile browsers often restore this exact page (with curtain already
+  // closed + music already "played") from cache on back/forward navigation.
+  // Reset the curtain every time the page is actually shown to the user.
+  window.addEventListener('pageshow', function(e){
+    if (e.persisted) {
+      resetCurtain();
+      curtain.addEventListener('click', openCurtain, {once:true});
+      curtain.addEventListener('touchend', openCurtain, {once:true, passive:true});
+    }
+  });
+
+  // ---- Navigation ----
+  document.getElementById('back-btn').addEventListener('click', function(){
+    window.location.href = 'puzzle.html';
+  });
+  document.getElementById('continue-btn').addEventListener('click', function(){
+    window.location.href = 'video.html';
+  });
+})();
+</script>
+</body>
+</html>

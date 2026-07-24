@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#EAF4FF"/>
+      <stop offset="100%" stop-color="#FDF2FA"/>
+    </linearGradient>
+    <linearGradient id="heartGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7EC8FF"/>
+      <stop offset="100%" stop-color="#CDB8FF"/>
+    </linearGradient>
+  </defs>
+
+  <circle cx="100" cy="100" r="95" fill="url(#bgGrad)"/>
+
+  <!-- soft floating dots -->
+  <circle cx="55" cy="55" r="5" fill="#CDB8FF" opacity="0.5"/>
+  <circle cx="150" cy="60" r="4" fill="#7EC8FF" opacity="0.5"/>
+  <circle cx="45" cy="145" r="3.5" fill="#7EC8FF" opacity="0.5"/>
+  <circle cx="155" cy="140" r="5" fill="#CDB8FF" opacity="0.5"/>
+
+  <!-- center heart shape -->
+  <path
+    d="M100 135
+       C 70 110, 45 90, 45 65
+       C 45 45, 62 32, 80 40
+       C 90 44, 97 53, 100 60
+       C 103 53, 110 44, 120 40
+       C 138 32, 155 45, 155 65
+       C 155 90, 130 110, 100 135 Z"
+    fill="url(#heartGrad)"
+    opacity="0.9"/>
+</svg>

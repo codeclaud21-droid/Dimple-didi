@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+    <meta name="theme-color" content="#F8FBFF">
+
+    <title>Date Check | For My Dimple Di ❤️</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&family=Caveat:wght@500;700&display=swap"
+        rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <link rel="stylesheet" href="css/animations.css">
+
+    <!-- Page-specific styles (date input + shake) -->
+    <style>
+
+        .date-input-wrap{
+            display:flex;
+            justify-content:center;
+            margin:22px 0 6px;
+        }
+
+        #date-input{
+            width:100%;
+            max-width:260px;
+
+            text-align:center;
+
+            font-family:var(--font-body);
+            font-size:20px;
+            font-weight:600;
+            letter-spacing:1px;
+
+            color:var(--text);
+
+            padding:16px 18px;
+
+            border-radius:var(--radius-lg);
+
+            background:rgba(255,255,255,.30);
+            border:1px solid rgba(255,255,255,.45);
+
+            backdrop-filter:blur(var(--blur));
+            -webkit-backdrop-filter:blur(var(--blur));
+
+            box-shadow:var(--shadow);
+        }
+
+        #date-input::placeholder{
+            color:var(--text-light);
+            font-weight:400;
+        }
+
+        #error-message{
+            min-height:22px;
+            font-size:14px;
+            color:#E1637A;
+            text-align:center;
+            margin-bottom:6px;
+        }
+
+        @keyframes shakeInput{
+            0%,100%{ transform:translateX(0); }
+            20%{ transform:translateX(-8px); }
+            40%{ transform:translateX(8px); }
+            60%{ transform:translateX(-6px); }
+            80%{ transform:translateX(6px); }
+        }
+
+        .shake{
+            animation:shakeInput .4s ease;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <!-- ==========================
+         Date Gate Screen (Password-style)
+    =========================== -->
+
+    <main
+        id="date-check-page"
+        class="page">
+
+        <!-- Background -->
+
+        <div class="bg-layer">
+
+            <div class="bg-gradient"></div>
+
+            <div class="blur-circle one"></div>
+
+            <div class="blur-circle two"></div>
+
+        </div>
+
+        <!-- Main Container -->
+
+        <section class="container text-center">
+
+            <!-- Rakhi Icon -->
+
+            <img
+                src="assets/illustrations/rakhi.svg"
+                alt="Rakshabandhan Icon"
+                style="width:64px; margin:0 auto 22px;">
+
+            <h1
+                id="date-title"
+                class="title anim-fade-in-down">
+
+                Ek Khaas Tareek
+
+            </h1>
+
+            <div
+                class="message-card anim-fade-in-up">
+
+                <p class="subtitle">
+                    Wo tareek daalo jo apko yaad nhi.
+                </p>
+
+                <!-- Date Input -->
+
+                <div class="date-input-wrap">
+
+                    <input
+                        id="date-input"
+                        type="text"
+                        inputmode="numeric"
+                        maxlength="10"
+                        placeholder="DD/MM/YYYY">
+
+                </div>
+
+                <!-- Error Message -->
+
+                <p id="error-message"></p>
+
+                <!-- Enter Button -->
+
+                <button
+                    id="enter-btn"
+                    class="primary-btn mt-2">
+
+                    Enter
+
+                </button>
+
+            </div>
+
+        </section>
+
+        <!-- Floating Decorations -->
+
+        <div class="float-item flower-1"></div>
+        <div class="float-item flower-2"></div>
+        <div class="float-item star-1"></div>
+        <div class="float-item star-2"></div>
+
+    </main>
+
+    <!-- Shared JS -->
+    <script src="js/app.js"></script>
+
+    <!-- Password-style Date Gate Logic -->
+    <script>
+        (function () {
+
+            // ---- Correct "password" date: 28 August 2026 ----
+            var CORRECT_DATE = '28082026'; // digits only, DDMMYYYY
+
+            var input = document.getElementById('date-input');
+            var btn = document.getElementById('enter-btn');
+            var errorEl = document.getElementById('error-message');
+
+            function normalize(value) {
+                return value.replace(/\D/g, ''); // keep digits only
+            }
+
+            function checkDate() {
+
+                var entered = normalize(input.value);
+
+                if (entered === CORRECT_DATE) {
+
+                    window.location.href = 'welcome.html';
+
+                } else {
+
+                    errorEl.textContent = 'Ye tareek sahi nahi hai. Dobara try karo.';
+
+                    input.classList.remove('shake');
+                    void input.offsetWidth; // restart animation
+                    input.classList.add('shake');
+                }
+            }
+
+            btn.addEventListener('click', checkDate);
+
+            input.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') {
+                    checkDate();
+                }
+            });
+
+            // Clear error message as soon as user types again
+            input.addEventListener('input', function () {
+                errorEl.textContent = '';
+            });
+
+        })();
+    </script>
+
+</body>
+
+</html>

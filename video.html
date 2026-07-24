@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0d0b12">
+<title>Video Memories | For My Dimple Di ❤️</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/animations.css">
+<style>
+  html, body{ background:#0d0b12; }
+  #video-page{
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    background: #0d0b12;
+  }
+  #video-page .top-bar{ z-index: 50; }
+  #video-page .icon-btn svg path{ stroke:#fff; }
+  #video-page #music-btn{ font-size: 18px; }
+
+  /* ---- segmented story progress bar ---- */
+  .story-bars{
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    right: 14px;
+    display: flex;
+    gap: 5px;
+    z-index: 45;
+  }
+  .story-bar{
+    flex: 1;
+    height: 3px;
+    border-radius: 3px;
+    background: rgba(255,255,255,0.28);
+    overflow: hidden;
+  }
+  .story-bar-fill{
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #ffd6ec, #cdb8ff);
+    border-radius: 3px;
+  }
+
+  /* ---- vertical snap reel ---- */
+  .reel-track{
+    position: absolute;
+    inset: 0;
+    overflow-y: scroll;
+    scroll-snap-type: y mandatory;
+    scrollbar-width: none;
+  }
+  .reel-track::-webkit-scrollbar{ display:none; }
+
+  .video-slide{
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    scroll-snap-align: start;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #0d0b12;
+    overflow: hidden;
+  }
+  .video-slide video{
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .slide-vignette{
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0) 20%, rgba(0,0,0,0) 68%, rgba(0,0,0,0.75) 100%);
+    pointer-events: none;
+    z-index: 2;
+  }
+  .slide-caption{
+    position: absolute;
+    bottom: 90px;
+    left: 20px;
+    right: 20px;
+    z-index: 5;
+    color: #fff;
+    font-family: var(--font-emotion, 'Caveat', cursive);
+    font-size: 21px;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+  }
+  .slide-tapzones{
+    position: absolute;
+    inset: 0;
+    display: flex;
+    z-index: 10;
+  }
+  .tapzone{ flex: 1; }
+
+  .play-pause-icon{
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%) scale(0.7);
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.35);
+    backdrop-filter: blur(4px);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 6;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s ease, transform 0.35s ease;
+  }
+  .play-pause-icon.show{
+    opacity: 1;
+    transform: translate(-50%,-50%) scale(1);
+  }
+  .play-pause-icon svg{ width: 26px; height: 26px; }
+
+  .slide-index-tag{
+    position: absolute;
+    bottom: 34px;
+    left: 20px;
+    z-index: 5;
+    color: rgba(255,255,255,0.75);
+    font-size: 12px;
+    letter-spacing: 1px;
+  }
+
+  .reel-hint{
+    position: absolute;
+    bottom: 30px;
+    left: 0; right: 0;
+    text-align: center;
+    z-index: 20;
+    color: rgba(255,255,255,0.75);
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+  }
+  .reel-hint.hide{ opacity: 0; }
+
+  .reel-continue-wrap{
+    position: absolute;
+    bottom: 30px;
+    left: 0; right: 0;
+    display: flex;
+    justify-content: center;
+    z-index: 40;
+    opacity: 0;
+    transform: translateY(14px);
+    pointer-events: none;
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .reel-continue-wrap.show{
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  /* ---- opening curtain (reused visual language from gallery.html) ---- */
+  #curtain-overlay{
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    cursor: pointer;
+  }
+  .curtain-panel{
+    position: relative;
+    width: 50%;
+    height: 100%;
+    overflow: hidden;
+    transition: transform 1.15s cubic-bezier(.76,0,.24,1);
+  }
+  .curtain-left{
+    background: linear-gradient(120deg, #2b2140 0%, #4a3468 55%, #6b4f8f 100%);
+    border-right: 1px solid rgba(255,255,255,0.15);
+  }
+  .curtain-right{
+    background: linear-gradient(300deg, #3a2350 0%, #4a3468 55%, #2b2140 100%);
+    border-left: 1px solid rgba(255,255,255,0.15);
+  }
+  .curtain-panel::after{
+    content:'';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.18), transparent 60%);
+  }
+  #curtain-overlay.opened .curtain-left{ transform: translateX(-100%); }
+  #curtain-overlay.opened .curtain-right{ transform: translateX(100%); }
+  .curtain-content{
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+    text-align: center;
+    padding: 0 30px;
+    transition: opacity 0.4s ease, transform 0.5s ease;
+  }
+  #curtain-overlay.opened .curtain-content{
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  .curtain-emblem{
+    font-size: 32px;
+    margin-bottom: 6px;
+    animation: curtainFloat 3s ease-in-out infinite;
+  }
+  @keyframes curtainFloat{
+    0%,100%{ transform: translateY(0); }
+    50%{ transform: translateY(-8px); }
+  }
+  .curtain-title{
+    font-family: var(--font-emotion, 'Caveat', cursive);
+    font-size: clamp(28px, 8vw, 38px);
+    color: #fff;
+    text-shadow: 0 3px 16px rgba(0,0,0,0.4);
+  }
+  .curtain-sub{
+    margin-top: 10px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.85);
+    letter-spacing: 0.5px;
+    animation: curtainPulse 1.8s ease-in-out infinite;
+  }
+  @keyframes curtainPulse{
+    0%,100%{ opacity: 0.55; }
+    50%{ opacity: 1; }
+  }
+</style>
+</head>
+<body>
+<div id="curtain-overlay">
+  <div class="curtain-panel curtain-left"></div>
+  <div class="curtain-panel curtain-right"></div>
+  <div class="curtain-content">
+    <div class="curtain-emblem">🎬</div>
+    <div class="curtain-title">Video Memories</div>
+    <p class="curtain-sub">Tap kahin bhi karo shuru karne ke liye</p>
+  </div>
+</div>
+
+<main id="video-page" class="page">
+
+  <div class="top-bar">
+    <button id="back-btn" class="icon-btn" aria-label="Back">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path d="M15 18l-6-6 6-6" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <button id="music-btn" class="icon-btn" aria-label="Toggle Sound">🔊</button>
+  </div>
+
+  <div class="story-bars" id="story-bars"></div>
+
+  <div class="reel-track" id="reel-track"></div>
+
+  <p class="reel-hint" id="reel-hint">↑ Upar swipe karo agli video ke liye</p>
+
+  <div class="reel-continue-wrap" id="continue-wrap">
+    <button id="continue-btn" class="primary-btn">Aage Badhiye</button>
+  </div>
+
+</main>
+
+<script src="js/app.js"></script>
+<script>
+(function(){
+  // PLACEHOLDER: original doc says "3-4 videos". assets/video/ is currently
+  // empty, so this assumes 4 files named video1.mp4 ... video4.mp4.
+  // Bata dena agar actual count/names alag hain, turant adjust kar dunga.
+  var VIDEO_COUNT = 4;
+  var captions = [
+    'Wo pal jo humesha yaad rahega 💛',
+    'Hasi jo kabhi nahi bhoolegi 😄',
+    'Ek aur pyara sa memory 🌸',
+    'Ye wala toh best hai 💫'
+  ];
+
+  var track = document.getElementById('reel-track');
+  var barsWrap = document.getElementById('story-bars');
+  var slides = [];
+  var bars = [];
+
+  for (var i = 0; i < VIDEO_COUNT; i++) {
+    var slide = document.createElement('div');
+    slide.className = 'video-slide';
+    slide.dataset.index = i;
+
+    var video = document.createElement('video');
+    video.src = 'assets/video/video' + (i+1) + '.mp4';
+    video.playsInline = true;
+    video.setAttribute('playsinline','');
+    video.muted = false;
+    video.preload = 'metadata';
+    slide.appendChild(video);
+
+    var vignette = document.createElement('div');
+    vignette.className = 'slide-vignette';
+    slide.appendChild(vignette);
+
+    var caption = document.createElement('div');
+    caption.className = 'slide-caption';
+    caption.textContent = captions[i % captions.length];
+    slide.appendChild(caption);
+
+    var tag = document.createElement('div');
+    tag.className = 'slide-index-tag';
+    tag.textContent = String(i+1).padStart(2,'0') + ' / ' + String(VIDEO_COUNT).padStart(2,'0');
+    slide.appendChild(tag);
+
+    var icon = document.createElement('div');
+    icon.className = 'play-pause-icon';
+    icon.innerHTML = '<svg viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg>';
+    slide.appendChild(icon);
+
+    var tapzones = document.createElement('div');
+    tapzones.className = 'slide-tapzones';
+    tapzones.innerHTML = '<div class="tapzone"></div><div class="tapzone"></div>';
+    slide.appendChild(tapzones);
+
+    track.appendChild(slide);
+    slides.push({el: slide, video: video, icon: icon});
+
+    var bar = document.createElement('div');
+    bar.className = 'story-bar';
+    var fill = document.createElement('div');
+    fill.className = 'story-bar-fill';
+    bar.appendChild(fill);
+    barsWrap.appendChild(bar);
+    bars.push(fill);
+
+    // tap on video toggles play/pause and shows icon briefly
+    tapzones.addEventListener('click', function(v, ic){
+      return function(){
+        if (v.paused) { v.play().catch(function(){}); ic.innerHTML = '<svg viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg>'; }
+        else { v.pause(); ic.innerHTML = '<svg viewBox="0 0 24 24" fill="#fff"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>'; }
+        ic.classList.add('show');
+        setTimeout(function(){ ic.classList.remove('show'); }, 500);
+      };
+    }(video, icon));
+
+    // auto-advance to next video when current one ends
+    video.addEventListener('ended', function(idx){
+      return function(){
+        if (idx < VIDEO_COUNT - 1) {
+          slides[idx+1].el.scrollIntoView({behavior:'smooth'});
+        } else {
+          document.getElementById('continue-wrap').classList.add('show');
+        }
+      };
+    }(i));
+  }
+
+  var currentIndex = 0;
+  var watched = new Array(VIDEO_COUNT).fill(false);
+
+  function updateBars(){
+    bars.forEach(function(fill, i){
+      if (i < currentIndex) fill.style.width = '100%';
+      else if (i > currentIndex) fill.style.width = '0%';
+    });
+  }
+
+  function setActive(idx){
+    slides.forEach(function(s, i){
+      if (i === idx) {
+        s.video.currentTime = s.video.currentTime || 0;
+        s.video.play().catch(function(){});
+      } else {
+        s.video.pause();
+      }
+    });
+    currentIndex = idx;
+    watched[idx] = true;
+    updateBars();
+    document.getElementById('reel-hint').classList.toggle('hide', idx > 0);
+    if (watched.every(Boolean)) {
+      document.getElementById('continue-wrap').classList.add('show');
+    }
+  }
+
+  // track progress fill for the active video
+  setInterval(function(){
+    var s = slides[currentIndex];
+    if (!s) return;
+    var v = s.video;
+    if (v.duration) {
+      bars[currentIndex].style.width = ((v.currentTime / v.duration) * 100) + '%';
+    }
+  }, 200);
+
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if (entry.isIntersecting && entry.intersectionRatio > 0.6) {
+        var idx = parseInt(entry.target.dataset.index, 10);
+        setActive(idx);
+      }
+    });
+  }, {threshold: [0.6]});
+  slides.forEach(function(s){ io.observe(s.el); });
+
+  // ---- Opening curtain: first tap opens it AND starts video+sound (real user gesture) ----
+  var curtain = document.getElementById('curtain-overlay');
+  var muted = false;
+
+  function openCurtain(){
+    slides[0].video.muted = false;
+    slides[0].video.play().catch(function(){});
+    curtain.classList.add('opened');
+    setTimeout(function(){ curtain.style.display = 'none'; }, 1200);
+    curtain.removeEventListener('click', openCurtain);
+    curtain.removeEventListener('touchend', openCurtain);
+  }
+  curtain.addEventListener('click', openCurtain, {once:true});
+  curtain.addEventListener('touchend', openCurtain, {once:true, passive:true});
+
+  window.addEventListener('pageshow', function(e){
+    if (e.persisted) {
+      curtain.classList.remove('opened');
+      curtain.style.display = 'flex';
+      curtain.addEventListener('click', openCurtain, {once:true});
+      curtain.addEventListener('touchend', openCurtain, {once:true, passive:true});
+    }
+  });
+
+  // ---- Sound toggle (controls current video's audio, not a separate bg track) ----
+  var soundBtn = document.getElementById('music-btn');
+  soundBtn.addEventListener('click', function(){
+    muted = !muted;
+    slides.forEach(function(s){ s.video.muted = muted; });
+    soundBtn.textContent = muted ? '🔇' : '🔊';
+  });
+
+  // ---- Navigation ----
+  document.getElementById('back-btn').addEventListener('click', function(){
+    window.location.href = 'gallery.html';
+  });
+  document.getElementById('continue-btn').addEventListener('click', function(){
+    window.location.href = 'hidden.html';
+  });
+})();
+</script>
+</body>
+</html>

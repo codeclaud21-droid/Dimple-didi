@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+    <meta name="theme-color" content="#F8FBFF">
+
+    <title>Welcome | For My Dimple Di ❤️</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&family=Caveat:wght@500;700&display=swap"
+        rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <link rel="stylesheet" href="css/animations.css">
+
+    <!-- Page-specific styles -->
+    <style>
+
+        .name-reveal{
+            font-family:var(--font-emotion);
+            font-size:clamp(46px,13vw,68px);
+            color:var(--text);
+            margin:10px 0 20px;
+        }
+
+        .name-reveal span{
+            display:inline-block;
+            opacity:0;
+        }
+
+        .intro-tag{
+            font-size:14px;
+            letter-spacing:2px;
+            text-transform:uppercase;
+            color:var(--text-light);
+            opacity:0;
+            animation:fadeIn var(--speed-slow) var(--ease) forwards;
+            animation-delay:.2s;
+        }
+
+        #music-btn{
+            font-size:20px;
+        }
+
+        /* ---- Circular Glow Photo Frame (Enhanced) ---- */
+
+        .photo-frame-wrap{
+            position:relative;
+            width:clamp(200px, 58vw, 250px);
+            aspect-ratio:1;
+            margin:14px auto 30px;
+            animation:photoBreathe 6s ease-in-out infinite;
+        }
+
+        @keyframes photoBreathe{
+            0%,100%{ transform:translateY(0); }
+            50%{ transform:translateY(-10px); }
+        }
+
+        .photo-glow-ring{
+            position:absolute;
+            inset:-14px;
+            border-radius:50%;
+            background:linear-gradient(135deg, var(--primary), var(--accent));
+            filter:blur(22px);
+            opacity:.6;
+            animation:photoGlowPulse 4.5s ease-in-out infinite;
+        }
+
+        @keyframes photoGlowPulse{
+            0%,100%{ opacity:.5; transform:scale(1); }
+            50%{ opacity:.75; transform:scale(1.08); }
+        }
+
+        /* Orbiting decorations around the frame */
+
+        .orbit-ring{
+            position:absolute;
+            inset:0;
+            animation:orbitSpin 16s linear infinite;
+        }
+
+        @keyframes orbitSpin{
+            from{ transform:rotate(0deg); }
+            to{ transform:rotate(360deg); }
+        }
+
+        .orbit-item{
+            position:absolute;
+            top:50%;
+            left:50%;
+            width:26px;
+            height:26px;
+            margin:-13px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:17px;
+        }
+
+        .orbit-item span{
+            display:inline-block;
+            animation:counterSpin 16s linear infinite;
+        }
+
+        @keyframes counterSpin{
+            from{ transform:rotate(0deg); }
+            to{ transform:rotate(-360deg); }
+        }
+
+        /* Circular clip that holds photo + shimmer sweep */
+
+        .photo-clip{
+            position:relative;
+            width:100%;
+            height:100%;
+            border-radius:50%;
+            overflow:hidden;
+
+            border:4px solid rgba(255,255,255,.85);
+            box-shadow:0 12px 34px rgba(126,150,255,.4);
+        }
+
+        .photo-frame{
+            width:100%;
+            height:100%;
+            object-fit:cover;
+            display:block;
+            animation:scaleIn .8s var(--ease) forwards;
+        }
+
+        .photo-shimmer{
+            position:absolute;
+            inset:0;
+            pointer-events:none;
+            background:linear-gradient(
+                75deg,
+                transparent 40%,
+                rgba(255,255,255,.65) 50%,
+                transparent 60%
+            );
+            transform:translateX(-150%);
+            animation:shimmerSweep 5s ease-in-out infinite;
+        }
+
+        @keyframes shimmerSweep{
+            0%{ transform:translateX(-150%); }
+            10%{ transform:translateX(150%); }
+            100%{ transform:translateX(150%); }
+        }
+
+        .photo-placeholder{
+            position:relative;
+            width:100%;
+            height:100%;
+            border-radius:50%;
+
+            display:none;
+            align-items:center;
+            justify-content:center;
+
+            font-size:13px;
+            text-align:center;
+            color:var(--text-light);
+            padding:14px;
+
+            background:rgba(255,255,255,.35);
+            border:4px dashed rgba(126,200,255,.6);
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <!-- ==========================
+         Welcome / Name Reveal Screen
+    =========================== -->
+
+    <main
+        id="welcome-page"
+        class="page">
+
+        <!-- Background -->
+
+        <div class="bg-layer">
+
+            <div class="bg-gradient"></div>
+
+            <div class="blur-circle one"></div>
+
+            <div class="blur-circle two"></div>
+
+        </div>
+
+        <!-- Top Bar: Back + Music -->
+
+        <div class="top-bar">
+
+            <button
+                id="back-btn"
+                class="icon-btn"
+                aria-label="Back">
+
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <path d="M15 18l-6-6 6-6" stroke="#2C2C2C" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+
+            </button>
+
+            <button
+                id="music-btn"
+                class="icon-btn"
+                aria-label="Toggle Music">
+
+                🔊
+
+            </button>
+
+        </div>
+
+        <!-- Main Container -->
+
+        <section class="container text-center">
+
+            <p class="intro-tag">Babu ki taraf se</p>
+
+            <!-- Circular Glow Photo Frame -->
+            <div class="photo-frame-wrap">
+
+                <div class="photo-glow-ring"></div>
+
+                <!-- Orbiting decorations -->
+                <div class="orbit-ring">
+                    <div class="orbit-item" style="transform:rotate(0deg) translate(0, -128px);"><span>✨</span></div>
+                    <div class="orbit-item" style="transform:rotate(72deg) translate(0, -128px);"><span>💗</span></div>
+                    <div class="orbit-item" style="transform:rotate(144deg) translate(0, -128px);"><span>🌸</span></div>
+                    <div class="orbit-item" style="transform:rotate(216deg) translate(0, -128px);"><span>💫</span></div>
+                    <div class="orbit-item" style="transform:rotate(288deg) translate(0, -128px);"><span>🌷</span></div>
+                </div>
+
+                <div class="photo-clip">
+
+                    <img
+                        id="didi-photo"
+                        class="photo-frame"
+                        src="assets/image/didi.jpg"
+                        alt="Dimple Di"
+                        onerror="this.style.display='none'; document.getElementById('photo-placeholder').style.display='flex';">
+
+                    <div class="photo-shimmer"></div>
+
+                    <div id="photo-placeholder" class="photo-placeholder">
+                        Yahan Dimple Di ki photo aayegi
+                    </div>
+
+                </div>
+
+            </div>
+
+            <h1
+                id="name-reveal"
+                class="name-reveal">
+            </h1>
+
+            <p
+                id="intro-message"
+                class="subtitle anim-fade-in-up">
+
+                Ye chhota sa safar sirf tumhare liye bana hai.
+
+            </p>
+
+            <button
+                id="continue-btn"
+                class="primary-btn mt-4 anim-scale-in">
+
+                Aage Badhiye
+
+            </button>
+
+        </section>
+
+        <!-- Floating Decorations -->
+
+        <div class="float-item flower-1"></div>
+        <div class="float-item flower-2"></div>
+        <div class="float-item star-1"></div>
+        <div class="float-item star-2"></div>
+
+    </main>
+
+    <!-- Background Music (add actual file at assets/music/welcome.mp3) -->
+    <audio id="bg-music" src="assets/music/welcome.mp3" loop></audio>
+
+    <!-- Shared JS -->
+    <script src="js/app.js"></script>
+
+    <script>
+
+        // ---- Name Reveal: letter-by-letter cascade ----
+        (function () {
+
+            var el = document.getElementById('name-reveal');
+            var text = 'Dimple Di';
+
+            text.split('').forEach(function (ch, i) {
+
+                var span = document.createElement('span');
+                span.textContent = (ch === ' ') ? '\u00A0' : ch;
+                span.style.animation = 'fadeInUp .6s var(--ease) forwards';
+                span.style.animationDelay = (0.4 + i * 0.08) + 's';
+
+                el.appendChild(span);
+            });
+
+        })();
+
+        // ---- Back Button ----
+        document.getElementById('back-btn').addEventListener('click', function () {
+            window.location.href = 'date-check.html';
+        });
+
+        // ---- Continue Button ----
+        document.getElementById('continue-btn').addEventListener('click', function () {
+            window.location.href = 'puzzle.html';
+        });
+
+        // ---- Music Toggle (mute state remembered across pages) ----
+        (function () {
+
+            var audio = document.getElementById('bg-music');
+            var btn = document.getElementById('music-btn');
+            var storageKey = 'dimple_music_muted';
+
+            var muted = localStorage.getItem(storageKey) === 'true';
+
+            function updateIcon() {
+                btn.textContent = muted ? '🔇' : '🔊';
+            }
+
+            function tryPlay() {
+                if (!muted) {
+                    audio.play().catch(function () {
+                        // Autoplay blocked by browser, will retry on first tap
+                    });
+                }
+            }
+
+            audio.muted = muted;
+            updateIcon();
+            tryPlay();
+
+            btn.addEventListener('click', function () {
+                muted = !muted;
+                audio.muted = muted;
+                localStorage.setItem(storageKey, muted);
+
+                if (!muted) {
+                    audio.play().catch(function () {});
+                }
+
+                updateIcon();
+            });
+
+            // Mobile browsers block audio autoplay until a real user gesture.
+            // Catch the very first tap anywhere on the page (capture phase,
+            // pointerdown) so music starts immediately on first touch,
+            // even if that tap is on a button that navigates away.
+            document.addEventListener('pointerdown', function firstInteract() {
+                tryPlay();
+                document.removeEventListener('pointerdown', firstInteract, true);
+            }, { once: true, capture: true });
+
+        })();
+
+    </script>
+
+</body>
+
+</html>
